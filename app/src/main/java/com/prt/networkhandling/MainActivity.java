@@ -1,6 +1,11 @@
 package com.prt.networkhandling;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.prt.networkhandling.net.GetDataService;
+import com.prt.networkhandling.net.RetrofitClient;
 
 import org.json.JSONStringer;
 
@@ -17,12 +24,34 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static String TEST_TAG = "TEST_TAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        printJsonToObject();
+        Retrofit retrofit = RetrofitClient.getInstance();
+        GetDataService getDataService = retrofit.create(GetDataService.class);
+
+        getDataService.userList().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<User>> call, @NonNull Response<List<User>> response) {
+                StringBuilder builder = new StringBuilder();
+                List<User> userList = response.body();
+                if (userList != null) {
+                    for (User user : userList) {
+                        builder.append("\n").append(user.getId()).append(", ").append(user.getName()).append(", ").append(user.getLastName()).append(", ").append(user.getAge());
+                    }
+                }
+                Log.d(TEST_TAG, builder.toString());
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<User>> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void printObjectListToJson() {
