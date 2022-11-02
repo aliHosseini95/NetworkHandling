@@ -8,7 +8,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -16,20 +19,30 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.prt.networkhandling.net.GetDataService;
 import com.prt.networkhandling.net.RetrofitClient;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONStringer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     public final static String TEST_TAG = "TEST_TAG";
 
+    private final static String IMAGE_ADDRESS = "https://static4.bartarinha.ir/thumbnail/qWU3Gap6fjk2/D2MFU5LFan0QE_ka-I22ZfBPSj-U-uwTdwGqFwcFAorUY6i4SBkyETm60AolDQHRPZwNu0DRPhZBJdMMluQ8NrNUNpPHtik4I92rydvasBpHYvEDZXsgTQ,,/qhaic8tw+copy.jpg";
+    private ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        imageView = findViewById(R.id.image_view);
+        Picasso.get().load(IMAGE_ADDRESS).into(imageView);
 
         Retrofit retrofit = RetrofitClient.getInstance();
         GetDataService getDataService = retrofit.create(GetDataService.class);
